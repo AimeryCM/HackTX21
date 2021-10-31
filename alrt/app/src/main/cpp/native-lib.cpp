@@ -2,7 +2,7 @@
 #include <string>
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_alrt_MainActivity_stringFromJNI(
+Java_com_example_alrtfront_MainActivity_stringFromJNI(
         JNIEnv* env,
         jobject /* this */,
         jstring test) {

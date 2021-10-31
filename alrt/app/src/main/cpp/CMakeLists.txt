@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10.2)
 
 # Declares and names the project.
 
-project("alrt")
+project("alrtfront")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -15,7 +15,7 @@ project("alrt")
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-        alrt
+        alrtfront
 
         # Sets the library as a shared library.
         SHARED
@@ -41,25 +41,8 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-        alrt
+        alrtfront
 
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})
-
-# From neural network
-set(MODEL_FOLDER .)
-include(${MODEL_FOLDER}/edge-impulse-sdk/cmake/utils.cmake)
-add_subdirectory(${MODEL_FOLDER}/edge-impulse-sdk/cmake/zephyr)
-target_include_directories(app PRIVATE
-    ${MODEL_FOLDER}
-    ${MODEL_FOLDER}/tflite-model
-    ${MODEL_FOLDER}/model-parameters
-)
-include_directories(${INCLUDES})
-# find model source files
-RECURSIVE_FIND_FILE(MODEL_FILES "${MODEL_FOLDER}/tflite-model" "*.cpp")
-list(APPEND SOURCE_FILES ${MODEL_FILES})
-
-# add all sources to the project
-target_sources(app PRIVATE ${SOURCE_FILES})
