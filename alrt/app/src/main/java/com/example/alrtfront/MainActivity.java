@@ -2,12 +2,18 @@ package com.example.alrtfront;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,20 +22,19 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("alrtfront");
     }
     private static View myView = null;
+    private static ImageView imgView = null;
 
     private static int flash = 0;
-    private final static int SIREN_DURATION = 10;
-    final static int SIREN_INTERVAL = 1000;
-    boolean whichColor = true;
+    private final static int SIREN_DURATION = 20;
+    final static int SIREN_INTERVAL = 500;
+    static boolean whichColor = true;
 
-    private final static int HONK_DURATION = 5000;
-    private final static int HONK_INCREASE = 1000;
+    private final static int HONK_DURATION = 2000;
+    private final static int HONK_INCREASE = 1500;
     private static int honkTime = 0;
     private static boolean honkSleep = false;
 
-    int[] COLORS = {0xff0000, 0x0000ff};
-    int TIME = 500;
-    int color = 0;
+    private static Drawable hornIcon, sirenIcon;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -46,8 +51,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sirenIcon = getResources().getDrawable(R.drawable.siren);
+        hornIcon = getResources().getDrawable(R.drawable.horn);
+        sirenIcon.setAlpha(55);
+        hornIcon.setAlpha(55);
+
         myView = (View) findViewById(R.id.mylayout);
-        myView.setBackgroundColor(Color.BLACK);// set initial colour
+        imgView = (ImageView) findViewById(R.id.icon);
+//        myView.setBackgroundColor(Color.WHITE);// set initial colour
 
         WindowManager.LayoutParams layout = getWindow().getAttributes();
         layout.screenBrightness = 1F;
@@ -66,14 +78,9 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-//
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
-
-        // Example of a call to a native method
-//        TextView tv = binding.sampleText;
-//        tv.setText(stringFromJNI("hello world"));
         //toggle(-1);
+//        TextView tv = (TextView) findViewById(R.id.sample_text);
+//        tv.setText(getApplicationInfo().dataDir);
     }
 
     private void updateColor() {
@@ -86,18 +93,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void siren() {
+        imgView.setImageDrawable(sirenIcon);
         if (flash == 0) {
             new Thread(() -> {
                 flash = SIREN_DURATION;
                 while (flash > 0) {
+                    updateColor();
+                    whichColor = !whichColor;
+                    flash--;
                     try {
                         Thread.sleep(SIREN_INTERVAL);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    updateColor();
-                    whichColor = !whichColor;
-                    flash--;
                 }
                 runOnUiThread(() -> {
                     myView.setBackgroundColor(Color.BLACK);// set initial colour
@@ -110,7 +118,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void honk() {
-        if (honkSleep == false) {
+        if (flash == 0) {
+            imgView.setImageDrawable(hornIcon);
+        }
+        if (honkSleep == false && flash == 0) {
             new Thread(() -> {
                 honkSleep = true;
                 honkTime = HONK_DURATION;
@@ -136,11 +147,6 @@ public class MainActivity extends AppCompatActivity {
                 honkTime += HONK_INCREASE;
             }
         }
-    }
-
-    public void toggle(int type) {
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText("Type: " + type);
     }
 
     /**
