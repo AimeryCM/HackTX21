@@ -12,7 +12,7 @@ alrt provides noticeable and distinguishable visual cues to help individuals who
 
 # Core Technologies
 
-alrt was developed using Android Studio, and is powered by a machine learning model trained by [Edge Impulse](https://www.edgeimpulse.com). The C++ code to classify audio is based off of the sample code from the [C++ example](https://github.com/edgeimpulse/example-standalone-inferencing-linux).
+alrt was developed using Android Studio, and is powered by a machine learning model trained by [Edge Impulse](https://www.edgeimpulse.com). The C++ code to classify audio is based off of the sample code from the [C++ audio example](https://github.com/edgeimpulse/example-standalone-inferencing-linux).
 
 # Challenges we ran into
 
